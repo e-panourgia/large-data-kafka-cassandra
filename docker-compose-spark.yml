@@ -1,0 +1,8 @@
+version: "2"
+     
+services:
+     
+  spark:
+    image: "apache/spark:3.5.0-python3"
+    container_name: "spark"
+
