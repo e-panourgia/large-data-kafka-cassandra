@@ -1,4 +1,9 @@
-### Execution Part 
+### Kafka-Cassandra-Large-Data
+In the spoce of this assignment (see `ProgrammingAssignment_2.pdf`) we will use Apache Spark framework and Apache Cassandra NoSQL databasein order to create a structured streaming spark process taht consumes Kafka messages and uses Cassandra as a sink to persist information. 
+
+A detailed report has been written expalinin all parts of this assignment (see `report.pdf`).
+
+### Deployment
 1. **Open a first terminal for the Kafka Producer** and execute the following commands in sequence:
 ```bash
 vagrant up
@@ -78,3 +83,18 @@ SPARK_LOCAL_DIRS=/vagrant/spark-tmp spark-submit \
   --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,com.datastax.spark:spark-cassandra-connector_2.12:3.0.0 \
   examples/cassandra-spark-streaming-example.py
 ```
+
+### CQL Queries 
+- Query 1: Retrieve movie durations for average runtime calculation:
+```bash
+SELECT avg(rating) FROM netflix_ks.movie_ratings
+WHERE name = 'Evangelia Panourgia' AND hour_bucket = '2025-03-27 09:00';
+```
+- __Purpose__: To fetch all movie durations rated by Evangelia Panourgia during the hour 2025-03-27 09:00, which can be used to compute the average runtime manually.
+
+-  Query 2: Retrieve names of the movies rated during the same hour:
+```bash
+SELECT movie FROM netflix_ks.movie_ratings
+WHERE name = 'Evangelia Panourgia' AND hour_bucket = '2025-03-27 09:00';
+```
+- __Purpose__: To list all movie titles rated by Evangelia Panourgia during the hour 2025-03-27 09:00.
