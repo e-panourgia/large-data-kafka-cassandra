@@ -1,7 +1,7 @@
 ### Kafka-Cassandra-Large-Data
-In the spoce of this assignment (see `ProgrammingAssignment_2.pdf`) we will use Apache Spark framework and Apache Cassandra NoSQL databasein order to create a structured streaming spark process taht consumes Kafka messages and uses Cassandra as a sink to persist information. 
+In the scope of this assignment (see `ProgrammingAssignment_2.pdf`), we will use the Apache Spark framework and the Apache Cassandra NoSQL database in order to create a structured streaming Spark process that consumes Kafka messages and uses Cassandra as a sink to persist information.
 
-A detailed report has been written expalinin all parts of this assignment (see `report.pdf`).
+A detailed report has been written explaining all parts of this assignment (see `report.pdf`).
 
 ### Deployment
 1. **Open a first terminal for the Kafka Producer** and execute the following commands in sequence:
