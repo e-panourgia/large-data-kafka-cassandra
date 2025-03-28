@@ -18,7 +18,7 @@
 \usepackage{multicol}
 \usepackage{tikz}
 \usepackage{url}
-
+\usepackage{hyperref} 
 \usepackage{geometry}
 \geometry{left=25mm,right=25mm,%
 bindingoffset=0mm, top=20mm,bottom=20mm}
@@ -218,7 +218,9 @@ The image below depicts the console output helping us to debug the kafka produce
 
 \section*{Part 2}
 \subsection*{The pyspark script for the second part.}
-This PySpark application establishes a real-time data pipeline that reads movie rating events from a Kafka topic, enriches them with metadata from a static Netflix dataset, and writes the processed results into a Cassandra database. The script defines two schemas: one for parsing JSON-encoded rating messages received from Kafka, and another for reading static metadata from a CSV file. It converts timestamps to proper \texttt{TimestampType}, and groups data by hourly buckets for time-based aggregations. Ratings are joined with metadata on the movie title to create an enriched DataFrame, which is then written to Cassandra using the \texttt{foreachBatch} method in micro-batch mode. This architecture enables structured streaming analysis and time-windowed queries for individual users and movies.
+This PySpark application establishes a real-time data pipeline that reads movie rating events from a Kafka topic, enriches them with metadata from a static Netflix dataset, and writes the processed results into a Cassandra database. The script defines two schemas: one for parsing JSON-encoded rating messages received from Kafka, and another for reading static metadata from a CSV file. It converts timestamps to proper \texttt{TimestampType}, and groups data by hourly buckets for time-based aggregations. Ratings are joined with metadata on the movie title to create an enriched DataFrame, which is then written to Cassandra using the \texttt{foreachBatch} method in micro-batch mode. This architecture enables structured streaming analysis and time-windowed queries for individual users and movies.\\
+
+To improve performance and avoid repeated disk reads, the static Netflix metadata is cached in memory, ensuring it remains efficiently accessible during each micro-batch operation within the streaming query.\\
 
 
 \begin{lstlisting}[label={list:second},caption=cassandra-spark-streaming-example.py.]
@@ -395,14 +397,38 @@ SELECT avg(duration).}
     \label{fig:cassandra-sample}
 \end{figure}
 
+Furthermore, after allowing the real-time streaming process to run for an additional hour, we re-executed the following queries—this time updating the hour\_bucket value from 09:00 to 10:00 to reflect the new time window.\\
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{q2-new.png} % Replace with your image filename
+    \caption{ Names of the movies you rated during a particular hour
+SELECT movie.}
+    \label{fig:cassandra-sample}
+\end{figure}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{new.png} % Replace with your image filename
+    \caption{Average duration of the movies you rated during the same hour
+SELECT avg(duration).}
+    \label{fig:cassandra-sample}
+\end{figure}
+
+Note: It is not necessary to explicitly include conditions such as IS NOT NULL in the CQL queries, as Cassandra automatically excludes null values from aggregation functions like AVG(). Therefore, rows with missing values for the targeted column are implicitly ignored during computation.\\
+
 \section*{Hosted on GitHub Repository - Deploy Instructions.}
 The complete implementation of this project is hosted on GitHub and is publicly accessible at \url{https://github.com/e-panourgia/large-data-kafka-cassandra}. The repository contains all necessary components, including Kafka producers, Spark Structured Streaming jobs, and Cassandra schemas. To execute the project, clone the repository using \texttt{git clone https://github.com/e-panourgia/large-data-kafka-cassandra}, then follow the instructions in the README file to set up Docker containers, start Kafka and Cassandra services, and run the streaming application using \texttt{spark-submit}. Ensure that you have installed Docker, Docker Compose, and Spark locally or are running within the provided Vagrant virtual machine for a consistent and reproducible development environment. \\
 
 Important note, this implementation was designed to run on mac m4 pc.
 
+\section*{Open source software (OSS): Contribution to Faker}
+As part of the Applied Software Engineering course during my BSc studies, I had the opportunity to contribute to the open-source project \texttt{Faker}, a Python library widely used for generating synthetic data. My contribution focused on enhancing the tag-handling functionality, which plays a critical role in structured data generation. Specifically, I improved the way tags are processed within data pipelines, enabling more accurate and flexible population of fields with fake data. This work was incorporated through a \href{https://github.com/joke2k/faker/pull/1648}{merged pull request} on GitHub, addressing limitations in tag parsing and significantly improving Faker’s usability in scenarios involving automated testing and data anonymization. This contribution was relevant, as Faker was used in our project to auto-generate event data for a producer component.
+
+
 \section*{Acknowledgements}
 I would like to sincerely thank \textbf{Professor Liakos Panayiotis} for his invaluable guidance, support, and dedication throughout the entire teaching process. His insightful lectures and continuous encouragement greatly contributed to the successful completion of this project.
-
 
 
 
