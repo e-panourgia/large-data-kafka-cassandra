@@ -37,7 +37,7 @@ netflix_df = (
     spark.read.schema(netflixSchema)
          .option("header", True)
          .csv("data/netflix.csv")
-         .withColumnRenamed("rating", "rating_category")  # 👈 Rename avoids conflict
+         .withColumnRenamed("rating", "rating_category")  # Rename avoids conflict
          .cache()
 )
 
